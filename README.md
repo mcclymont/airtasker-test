@@ -3,12 +3,13 @@
 This is a very empty Rails app. It has only 1 route; /api/widgets.
 There are no models nor database configuration.
 
-A custom middleware called RedisRateLimiter is implemented in app/src/redis_rate_limiter.rb and enabled only for the production environment.
+A custom middleware called RedisRateLimiter is implemented in app/src/redis_rate_limiter.rb and enabled only for the production environment. It requires Redis.
 
 ## Setup instructions
 1. ```git clone https://github.com/mcclymont/airtasker-test```
 2. ```cd airtasker-test```
 3. ```bundle install```
+4. Configure config/environments/production.rb to point to an instance of Redis, if it is running anywhere other than localhost with default port and no password.
 
 ## Configuration
 RedisRateLimiter is added as a middleware in config/environments/production.rb like so:
@@ -27,6 +28,10 @@ The available options for RedisRateLimiter are
 | identifier | (proc) Callable that takes request argument and returns unique identifier | request.remote_ip |
 | key_prefix | (string) Prefix to redis keys | redis_rate_limiter |
 | store | (object) Object instance that implements the redis-rb interface | Redis.new |
+
+Additional options to configure the Redis connection:
+
+:host, :port, :db, :url, :path, :password, :sentinels, :role
 
 ## Usage
 
