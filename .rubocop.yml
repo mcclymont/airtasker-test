@@ -1,0 +1,44 @@
+# http://rubocop.readthedocs.io/en/latest/cops/
+
+AllCops:
+  Exclude:
+    - 'vendor/**/*'
+    - 'db/migrate/*'
+    - 'db/schema.rb'
+  TargetRubyVersion: 2.4.1
+
+Metrics/AbcSize:
+  Max: 25
+
+Metrics/MethodLength:
+  Max: 25
+
+Style/RescueModifier:
+  Enabled: false
+
+Rails/TimeZone:
+  Enabled: false
+
+Layout/SpaceInsideHashLiteralBraces:
+  EnforcedStyle: no_space # Going with the convention of spaces for blocks (default), no spaces for hash literals
+
+Metrics/LineLength:
+  Max: 120 # Matches the margin in Intellij
+
+Metrics/MethodLength:
+  Max: 30
+
+Style/Documentation:
+  Enabled: false # Wants comment documentation at the top of every class
+
+Style/FrozenStringLiteralComment:
+  Enabled: false # Wants a comment at top of each file to enable Frozen String Literals
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
