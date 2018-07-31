@@ -1,5 +1,4 @@
 require_relative 'boot'
-require_relative '../app/src/redis_rate_limiter'
 
 require 'rails'
 # Pick the frameworks you want:
@@ -27,9 +26,5 @@ module AirtaskerTest
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
-
-    # config.middleware.use RateLimiter
-    config.middleware.insert_after ActionDispatch::RemoteIp,
-                                   RedisRateLimiter, count: 10, interval: 30.seconds
   end
 end
