@@ -1,9 +1,9 @@
 class RedisRateLimiter
-  def initialize(app, **options)
+  def initialize(app, interval:, count:, **options)
     @app = app
 
-    @interval = options[:interval].to_i
-    @count = options[:count].to_i
+    @interval = interval.to_i # Time interval in seconds
+    @count = count.to_i       # Max number of requests allowed per interval
 
     raise ArgumentError('interval must be set to a positive integer') if @interval <= 0
     raise ArgumentError('count must be set to a positive integer') if @count <= 0
