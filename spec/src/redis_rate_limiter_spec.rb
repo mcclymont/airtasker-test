@@ -26,8 +26,9 @@ RSpec.describe RedisRateLimiter do
     after(:each) { Timecop.return }
 
     it 'passes the first request' do
-      code, _env = middleware.call env_for
+      code, _env, body = middleware.call env_for
       expect(code).to eq 200
+      expect(body).to eq 'app'
     end
 
     it 'blocks on the 6th request' do
