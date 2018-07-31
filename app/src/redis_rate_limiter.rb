@@ -11,16 +11,9 @@ class RedisRateLimiter
     @code = options[:code] || 429 # https://tools.ietf.org/html/rfc6585#section-4
     @message = options[:message] || 'Rate limit exceeded'
     @identifier = options[:identifier]
-    @key_prefix = options[:key_prefix] || 'redis-rate-limiter'
+    @key_prefix = options[:key_prefix] || self.class.name.underscore
 
-    redis_options = options.slice(:host, :port, :db, :url, :path, :password, :sentinels, :role)
-    @redis = options[:redis] || Redis.new(**redis_options)
-
-    # Make sure that Redis connects successfully on app start
-    @redis.multi do
-      @redis.set @key_prefix, 'test'
-      @redis.expire @key_prefix, 1
-    end
+    @store = configure_store(**options)
   end
 
   def call(env)
@@ -29,6 +22,18 @@ class RedisRateLimiter
   end
 
   private
+
+  def configure_store(**options)
+    redis_options = options.slice(:host, :port, :db, :url, :path, :password, :sentinels, :role)
+    redis = options[:redis] || Redis.new(**redis_options)
+
+    # Make sure that Redis connects successfully on app start
+    redis.multi do
+      redis.set @key_prefix, 'test'
+      redis.expire @key_prefix, 1
+    end
+    redis
+  end
 
   def blocked?(request)
     # Uses 'Fixed window' rate limiting https://konghq.com/blog/how-to-design-a-scalable-rate-limiting-algorithm/
@@ -47,9 +52,9 @@ class RedisRateLimiter
   end
 
   def get_set_count(key)
-    response = @redis.multi do
-      @redis.incr key # increments the number @ key by 1, sets to 0 if doesn't exist (then incremented)
-      @redis.expire key, @interval
+    response = @store.multi do
+      @store.incr key # sets to 0 if doesn't exist, then increments and returns the value
+      @store.expire key, @interval
     end
 
     response[0].to_i
