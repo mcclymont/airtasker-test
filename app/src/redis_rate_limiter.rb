@@ -31,6 +31,9 @@ class RedisRateLimiter
   private
 
   def blocked?(request)
+    # Uses 'Fixed window' rate limiting https://konghq.com/blog/how-to-design-a-scalable-rate-limiting-algorithm/
+    # See also https://redis.io/commands/incr#pattern-rate-limiter-1
+
     now_timestamp = Time.now.to_i
     epoch_timestamp = now_timestamp - (now_timestamp % @interval) # round down current time to interval multiple
     key = [
