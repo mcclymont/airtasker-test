@@ -56,8 +56,11 @@ class RedisRateLimiter
       @store.incr key # sets to 0 if doesn't exist, then increments and returns the value
       @store.expire key, @interval
     end
-
     response[0].to_i
+  rescue Redis::BaseConnectionError => e
+    Rails.logger.error e
+    Rails.logger.error e.backtrace.join("\n")
+    1 # In case of Redis connection failure, disable rate limiting
   end
 
   def identifier(request)
