@@ -52,11 +52,11 @@ class RedisRateLimiter
   end
 
   def get_set_count(key)
-    response = @store.multi do
+    count, _expire = @store.multi do
       @store.incr key # sets to 0 if doesn't exist, then increments and returns the value
       @store.expire key, @interval
     end
-    response[0].to_i
+    count.to_i
   rescue Redis::BaseConnectionError => e
     Rails.logger.error e
     Rails.logger.error e.backtrace.join("\n")
